@@ -8,10 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://git@github.com/minni-im/minni-im-github.git"
+    "url": "git+https://github.com/minni-im/minni-im-github.git"
   },
   "author": "Benoit Charbonnier <benoit.charbonnier@gmail.com>",
-  "license": "APACHE2.0",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/minni-im/minni-im-github/issues"
   },
