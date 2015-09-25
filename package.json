@@ -1,5 +1,5 @@
 {
-  "name": "minni-im-github",
+  "name": "minni-auth-github",
   "version": "1.0.0",
   "description": "",
   "main": "./lib/",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/minni-im/minni-im-github.git"
+    "url": "git+https://github.com/minni-im/minni-auth-github.git"
   },
   "author": "Benoit Charbonnier <benoit.charbonnier@gmail.com>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/minni-im/minni-im-github/issues"
+    "url": "https://github.com/minni-im/minni-auth-github/issues"
   },
-  "homepage": "https://github.com/minni-im/minni-im-github#readme",
+  "homepage": "https://github.com/minni-im/minni-auth-github#readme",
   "devDependencies": {
     "eslint": "^1.2.1"
   },
