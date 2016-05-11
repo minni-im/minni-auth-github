@@ -1,0 +1,14 @@
+extends:
+  airbnb-base
+
+parser:
+  babel-eslint
+
+settings:
+  ecmascript: 6
+
+env:
+  node: true
+
+rules:
+  quotes: [2, "double", "avoid-escape"]

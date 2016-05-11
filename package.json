@@ -4,7 +4,8 @@
   "description": "",
   "main": "./lib/",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d lib"
   },
   "repository": {
     "type": "git",
@@ -17,14 +18,19 @@
   },
   "homepage": "https://github.com/minni-im/minni-auth-github#readme",
   "devDependencies": {
-    "eslint": "^1.2.1"
+    "babel-cli": "^6.8.0",
+    "babel-core": "^6.8.0",
+    "babel-eslint": "^6.0.4",
+    "babel-plugin-transform-class-properties": "^6.8.0",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
+    "babel-preset-es2015-node5": "^1.2.0",
+    "eslint": "^2.9.0",
+    "eslint-config-airbnb-base": "^3.0.1",
+    "eslint-plugin-import": "^1.7.0"
   },
   "dependencies": {
-    "passport-github": "^1.0.0"
-  },
-  "peerDependencies": {
-    "passport": "*",
-    "tape-recorder": "*"
+    "passport": "^0.3.2",
+    "passport-github": "^1.0.0",
+    "tape-recorder": "^2.1.1"
   }
-
 }
