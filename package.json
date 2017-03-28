@@ -1,5 +1,5 @@
 {
-  "name": "minni-auth-github",
+  "name": "@minni-im/minni-auth-github",
   "version": "1.0.0",
   "description": "",
   "main": "./lib/",
