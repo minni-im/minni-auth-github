@@ -1,8 +1,8 @@
 /* eslint no-underscore-dangle: 0 */
 import fs from "fs";
 import path from "path";
+import recorder from "@minni-im/tape-recorder";
 import passport from "passport";
-import recorder from "tape-recorder";
 import { Strategy as GithubStrategy } from "passport-github";
 
 const User = recorder.model("User");
@@ -16,18 +16,13 @@ export default class MinniAuthGithub {
     failureRedirect: "/login",
     failureFlash: true,
     logo: new Buffer(
-      fs.readFileSync(
-        path.join(__dirname, "..", "public", "logo.png")
-      )
+      fs.readFileSync(path.join(__dirname, "..", "public", "logo.png"))
     ).toString("base64"),
-  }
+  };
 
   constructor(options) {
     this.options = Object.assign(MinniAuthGithub.defaults, options);
-    if (!this.options.id ||
-      !this.options.secret ||
-      !this.options.callback
-    ) {
+    if (!this.options.id || !this.options.secret || !this.options.callback) {
       throw new Error(`MinniAuthGithub setup error: Missing configuration
 Pleasee check your id, secret and callback settings`);
     }
@@ -38,71 +33,79 @@ Pleasee check your id, secret and callback settings`);
    * @api public
    */
   setup() {
-    passport.use(new GithubStrategy({
-      userAgent: this.options.userAgent,
-      clientID: this.options.id,
-      clientSecret: this.options.secret,
-      callbackURL: this.options.callback,
-      passReqToCallback: true,
-    }, (req, accessToken, refreshToken, profile, done) => {
-      process.nextTick(() => {
-        const { session } = req;
-        if (session.authAction === "login") {
-          delete session.authAction;
-          return User.findByProviderId(PROVIDER_NAME, profile._json.id)
-            .then(
-              (user) => {
-                if (!user) {
+    passport.use(
+      new GithubStrategy(
+        {
+          userAgent: this.options.userAgent,
+          clientID: this.options.id,
+          clientSecret: this.options.secret,
+          callbackURL: this.options.callback,
+          passReqToCallback: true,
+        },
+        (req, accessToken, refreshToken, profile, done) => {
+          process.nextTick(() => {
+            const { session } = req;
+            if (session.authAction === "login") {
+              delete session.authAction;
+              return User.findByProviderId(
+                PROVIDER_NAME,
+                profile._json.id
+              ).then(
+                (user) => {
+                  if (!user) {
+                    done(
+                      null,
+                      false,
+                      [
+                        `Sorry we don't know any « ${profile.displayName} » from Github.`,
+                        " You first need to signup before trying to login",
+                      ].join("")
+                    );
+                  } else {
+                    done(null, user);
+                  }
+                },
+                (error) => done(error)
+              );
+            }
+
+            // Connect account or Signup
+            if (req.user) {
+              // Connecting
+              const localUser = req.user;
+              localUser.providers = {
+                ...localUser.providers,
+                [PROVIDER_NAME]: profile._json.id,
+              };
+              return localUser.save().then(
+                (user) => {
                   done(
                     null,
-                    false,
-                    [
-                      `Sorry we don't know any « ${profile.displayName} » from Github.`,
-                      " You first need to signup before trying to login",
-                    ].join("")
+                    user,
+                    "Successfully registered Github as an authentication provider"
                   );
-                } else {
-                  done(null, user);
-                }
+                },
+                (error) => done(error)
+              );
+            }
+
+            // Signup
+            const user = new User({
+              email: profile.emails[0].value,
+              providers: {
+                github: profile._json.id,
               },
+              avatar: profile._json.avatar_url,
+            });
+            user.fullname = profile.displayName;
+            return user.save().then(
+              (updatedUser) => done(null, updatedUser),
               (error) => done(error)
             );
+          });
         }
-
-        // Connect account or Signup
-        if (req.user) {
-          // Connecting
-          const localUser = req.user;
-          localUser.providers = {
-            ...localUser.providers,
-            [PROVIDER_NAME]: profile._json.id,
-          };
-          return localUser.save()
-            .then((user) => {
-              done(
-                null,
-                user,
-                "Successfully registered Github as an authentication provider"
-              );
-            }, (error) => done(error));
-        }
-
-        // Signup
-        const user = new User({
-          email: profile.emails[0].value,
-          providers: {
-            github: profile._json.id,
-          },
-          avatar: profile._json.avatar_url,
-        });
-        user.fullname = profile.displayName;
-        return user.save()
-          .then(
-            updatedUser => done(null, updatedUser),
-            error => done(error)
-          );
-      });
-    }));
+      )
+    );
   }
 
   /**
@@ -176,9 +179,12 @@ Pleasee check your id, secret and callback settings`);
       (req, res, next) => {
         const { providers } = req.user;
         delete providers.github;
-        req.user.save()
-          .then(() => {
-            req.flash("info", "Github has been successfully unlinked from your account.");
+        req.user.save().then(
+          () => {
+            req.flash(
+              "info",
+              "Github has been successfully unlinked from your account."
+            );
             next();
           },
           (error) => next(error)
