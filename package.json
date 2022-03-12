@@ -1,6 +1,6 @@
 {
   "name": "@minni-im/minni-auth-github",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "./lib/",
   "scripts": {
@@ -28,7 +28,7 @@
     "eslint-plugin-import": "^1.7.0"
   },
   "dependencies": {
-    "@minni-im/tape-recorder": "2.2.1",
+    "@minni-im/tape-recorder": "2.2.2",
     "babel-preset-es2015-node6": "^0.4.0",
     "passport": "^0.3.2",
     "passport-github": "^1.0.0"
